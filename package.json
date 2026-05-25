@@ -42,6 +42,7 @@
 	],
 	"scripts": {
 		"build": "directus-extension build",
+		"prepare": "directus-extension build",
 		"dev": "directus-extension build -w --no-minify",
 		"link": "directus-extension link",
 		"add": "directus-extension add"
