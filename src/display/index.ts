@@ -2,7 +2,7 @@ import { defineDisplay } from '@directus/extensions-sdk';
 import DisplayComponent from './display.vue';
 
 export default defineDisplay({
-	id: 'polymorphic-reference',
+	id: 'polymorphic-reference-display',
 	name: 'Polymorphic Reference',
 	icon: 'merge_type',
 	description:

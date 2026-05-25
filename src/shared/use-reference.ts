@@ -53,8 +53,12 @@ export function referenceEndpoint(collection: string, primaryKey: string | numbe
 
 /**
  * In-app router path to the detail view of a record.
+ *
+ * Returns `null` for system collections that have no navigable detail route
+ * (e.g. directus_permissions, directus_policies), so callers can render the
+ * value without a broken link.
  */
-export function buildRoute(collection: string, primaryKey: string | number): string {
+export function buildRoute(collection: string, primaryKey: string | number): string | null {
 	const id = encodeURIComponent(String(primaryKey));
 
 	switch (collection) {
@@ -64,9 +68,13 @@ export function buildRoute(collection: string, primaryKey: string | number): str
 			return `/files/${id}`;
 		case 'directus_roles':
 			return `/settings/roles/${id}`;
-		default:
-			return `/content/${collection}/${id}`;
 	}
+
+	// Other system collections are managed in system modules, not the Content
+	// module — there is no reliable `/content` route for them.
+	if (collection.startsWith('directus_')) return null;
+
+	return `/content/${collection}/${id}`;
 }
 
 /**
@@ -95,7 +103,14 @@ export function useReferencePreview(opts: {
 	const loading = ref(false);
 	const error = ref<unknown>(null);
 
+	// Monotonic token: only the most recent invocation may commit state. Guards
+	// against a slower earlier request resolving last and overwriting the label
+	// of the current reference (rapid sibling edits / recycled list rows).
+	let latestRequest = 0;
+
 	async function load() {
+		const requestId = ++latestRequest;
+
 		const collection = unref(opts.collection);
 		const primaryKey = unref(opts.primaryKey);
 		const template = unref(opts.template);
@@ -123,15 +138,19 @@ export function useReferencePreview(opts: {
 				params: fields.length ? { fields: fields.join(',') } : {},
 			});
 
+			if (requestId !== latestRequest) return; // superseded by a newer request
+
 			const item = (res.data?.data ?? {}) as Record<string, unknown>;
 			const rendered = renderTemplate(template, item);
 			label.value = rendered || String(primaryKey);
 		} catch (err) {
+			if (requestId !== latestRequest) return; // superseded by a newer request
+
 			error.value = err;
 			// Still show *something* navigable rather than a hard error in a table cell.
 			label.value = String(primaryKey);
 		} finally {
-			loading.value = false;
+			if (requestId === latestRequest) loading.value = false;
 		}
 	}
 

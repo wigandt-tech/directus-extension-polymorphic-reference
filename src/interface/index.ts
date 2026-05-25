@@ -2,7 +2,7 @@ import { defineInterface } from '@directus/extensions-sdk';
 import InterfaceComponent from './interface.vue';
 
 export default defineInterface({
-	id: 'polymorphic-reference',
+	id: 'polymorphic-reference-interface',
 	name: 'Polymorphic Reference',
 	icon: 'merge_type',
 	description:
