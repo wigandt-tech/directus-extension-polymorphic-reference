@@ -91,11 +91,12 @@ const text = computed(() => label.value || (primaryKey.value != null ? String(pr
 	<span class="polymorphic-reference-display">
 		<v-skeleton-loader v-if="loading" type="text" />
 		<span v-else-if="!hasValue" class="empty">--</span>
-		<router-link v-else-if="enableLink && route" :to="route" class="reference-link" @click.stop>
-			<v-icon name="open_in_new" x-small left />
-			<span>{{ text }}</span>
-		</router-link>
-		<span v-else>{{ text }}</span>
+		<template v-else>
+			<router-link v-if="enableLink && route" :to="route" class="reference-icon" @click.stop>
+				<v-icon name="launch" x-small />
+			</router-link>
+			<span class="reference-text">{{ text }}</span>
+		</template>
 	</span>
 </template>
 
@@ -103,17 +104,23 @@ const text = computed(() => label.value || (primaryKey.value != null ? String(pr
 .polymorphic-reference-display {
 	display: inline-flex;
 	align-items: center;
+	gap: 4px;
 }
 
-.reference-link {
+/* Only the icon is a link; the text stays plain. */
+.reference-icon {
 	display: inline-flex;
 	align-items: center;
-	color: var(--theme--primary);
+	color: var(--theme--foreground-subdued);
 	text-decoration: none;
 }
 
-.reference-link:hover {
-	text-decoration: underline;
+.reference-icon:hover {
+	color: var(--theme--primary);
+}
+
+.reference-text {
+	color: var(--theme--foreground);
 }
 
 .empty {
