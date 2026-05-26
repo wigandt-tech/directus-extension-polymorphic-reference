@@ -51,53 +51,113 @@ const text = computed(() => label.value || (props.value != null ? String(props.v
 </script>
 
 <template>
-	<div class="polymorphic-reference-interface">
-		<v-skeleton-loader v-if="loading" type="input" />
+	<v-skeleton-loader v-if="loading" type="input" />
 
-		<template v-else>
-			<span v-if="!hasValue" class="empty">--</span>
+	<!-- Empty state: looks like a disabled input -->
+	<div v-else-if="!hasValue" class="prf-field prf-field--empty">
+		<span class="prf-placeholder">{{ targetCollection ? '—' : 'Keine Entität gewählt' }}</span>
+	</div>
 
-			<router-link v-else-if="enableLink && route" :to="route" class="reference-link">
-				<v-chip small outlined clickable>
-					<v-icon name="open_in_new" x-small left />
-					<span class="text">{{ text }}</span>
-					<span class="collection">{{ targetCollection }}</span>
-				</v-chip>
+	<!-- Native-style related-item preview -->
+	<div v-else class="prf-field" :class="{ 'prf-field--link': enableLink && route }">
+		<component
+			:is="enableLink && route ? 'router-link' : 'div'"
+			:to="enableLink && route ? route : undefined"
+			class="prf-preview"
+		>
+			<div class="prf-content">
+				<span class="prf-label">{{ text }}</span>
+				<span class="prf-collection">{{ targetCollection }}</span>
+			</div>
+		</component>
+
+		<div class="prf-actions">
+			<router-link v-if="enableLink && route" v-tooltip="'Datensatz öffnen'" :to="route" class="prf-action" @click.stop>
+				<v-icon name="launch" />
 			</router-link>
-
-			<v-chip v-else small outlined>
-				<span class="text">{{ text }}</span>
-				<span class="collection">{{ targetCollection }}</span>
-			</v-chip>
-		</template>
+		</div>
 	</div>
 </template>
 
 <style scoped>
-.polymorphic-reference-interface {
+.prf-field {
 	display: flex;
 	align-items: center;
-	min-height: var(--theme--form--field--input--height, 60px);
+	width: 100%;
+	height: var(--theme--form--field--input--height, 60px);
+	padding: 0 8px 0 var(--theme--form--field--input--padding, 16px);
+	color: var(--theme--form--field--input--foreground);
+	background-color: var(--theme--form--field--input--background);
+	border: var(--theme--border-width, 2px) solid var(--theme--form--field--input--border-color);
+	border-radius: var(--theme--border-radius);
+	transition: border-color var(--fast, 150ms) var(--transition, ease);
 }
 
-.reference-link {
+.prf-field--link:hover {
+	border-color: var(--theme--form--field--input--border-color-hover);
+}
+
+.prf-field--empty {
+	color: var(--theme--foreground-subdued);
+}
+
+.prf-preview {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	height: 100%;
 	text-decoration: none;
+	color: inherit;
 }
 
-.text {
-	font-family: var(--theme--fonts--monospace--font-family);
+.prf-content {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	min-width: 0;
 }
 
-.collection {
-	margin-left: 6px;
-	padding-left: 6px;
-	border-left: 1px solid var(--theme--border-color-subdued);
+.prf-label {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.prf-field--link .prf-preview:hover .prf-label {
+	color: var(--theme--primary);
+}
+
+.prf-collection {
+	flex: 0 0 auto;
+	padding: 1px 6px;
 	color: var(--theme--foreground-subdued);
 	font-size: 11px;
+	font-family: var(--theme--fonts--monospace--font-family);
 	text-transform: lowercase;
+	background-color: var(--theme--background-normal);
+	border-radius: var(--theme--border-radius);
 }
 
-.empty {
+.prf-actions {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 2px;
 	color: var(--theme--foreground-subdued);
+}
+
+.prf-action {
+	display: inline-flex;
+	color: inherit;
+	transition: color var(--fast, 150ms) var(--transition, ease);
+}
+
+.prf-action:hover {
+	color: var(--theme--primary);
+}
+
+.prf-placeholder {
+	font-style: italic;
 }
 </style>
