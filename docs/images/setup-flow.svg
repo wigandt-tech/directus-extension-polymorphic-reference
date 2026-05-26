@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 230" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="780" height="230" rx="10" fill="#18222f"/>
+
+  <!-- Step 1 -->
+  <rect x="24" y="40" width="226" height="150" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+  <circle cx="52" cy="70" r="14" fill="#6644ff"/>
+  <text x="52" y="75" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">1</text>
+  <text x="78" y="75" fill="#e4ebf1" font-size="14" font-weight="600">entity_type field</text>
+  <text x="44" y="108" fill="#8196a9" font-size="12">Interface:</text>
+  <rect x="44" y="118" width="186" height="30" rx="6" fill="#1b2735" stroke="#2f3c4c"/>
+  <text x="56" y="138" fill="#c5cfdb" font-size="13">Collection Select</text>
+  <text x="44" y="170" fill="#8196a9" font-size="11">Dropdown of all collections</text>
+
+  <!-- Step 2 -->
+  <rect x="278" y="40" width="226" height="150" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+  <circle cx="306" cy="70" r="14" fill="#6644ff"/>
+  <text x="306" y="75" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">2</text>
+  <text x="332" y="75" fill="#e4ebf1" font-size="14" font-weight="600">entity_id field</text>
+  <text x="298" y="108" fill="#8196a9" font-size="12">Interface:</text>
+  <rect x="298" y="118" width="186" height="30" rx="6" fill="#1b2735" stroke="#2f3c4c"/>
+  <text x="310" y="138" fill="#c5cfdb" font-size="13">Polymorphic Reference</text>
+  <text x="298" y="170" fill="#8196a9" font-size="11">Collection = entity_type</text>
+
+  <!-- Step 3 -->
+  <rect x="532" y="40" width="226" height="150" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+  <circle cx="560" cy="70" r="14" fill="#6644ff"/>
+  <text x="560" y="75" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">3</text>
+  <text x="586" y="75" fill="#e4ebf1" font-size="14" font-weight="600">entity_id column</text>
+  <text x="552" y="108" fill="#8196a9" font-size="12">Display:</text>
+  <rect x="552" y="118" width="186" height="30" rx="6" fill="#1b2735" stroke="#2f3c4c"/>
+  <text x="564" y="138" fill="#c5cfdb" font-size="13">Polymorphic Reference</text>
+  <text x="552" y="170" fill="#8196a9" font-size="11">Label in list / table</text>
+
+  <!-- connectors -->
+  <g stroke="#3a485a" stroke-width="1.5">
+    <line x1="250" y1="115" x2="278" y2="115"/>
+    <line x1="504" y1="115" x2="532" y2="115"/>
+  </g>
+
+  <text x="24" y="20" fill="#e4ebf1" font-size="14" font-weight="600">Setup in 3 steps</text>
+</svg>

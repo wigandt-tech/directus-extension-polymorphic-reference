@@ -4,6 +4,8 @@ A Directus **bundle** for polymorphic references — a target *collection* plus 
 
 Think of a `comments` collection whose rows can belong to **either** `articles`, `products`, or `pages`:
 
+![Data model: one collection referencing many via entity_type + entity_id](docs/images/data-model.svg)
+
 ```
 comments
 ├─ id
@@ -24,6 +26,8 @@ comments
 
 ## Setup
 
+![Setup in three steps](docs/images/setup-flow.svg)
+
 ### 1. `entity_type` → **Collection Select** interface
 
 Settings → Data Model → your collection → field `entity_type` → Interface → **Collection Select**.
@@ -32,6 +36,8 @@ Settings → Data Model → your collection → field `entity_type` → Interfac
 - Stores the technical collection name (`articles`, `products`, …) — exactly what the reference resolves against.
 
 ### 2. `entity_id` → **Polymorphic Reference** interface (detail view)
+
+![Interface field states: empty, selected, and open dropdown](docs/images/field-states.svg)
 
 Field `entity_id` → Interface → **Polymorphic Reference**.
 

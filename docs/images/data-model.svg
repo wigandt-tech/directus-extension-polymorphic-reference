@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 320" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="780" height="320" rx="10" fill="#18222f"/>
+
+  <!-- Source collection -->
+  <rect x="32" y="84" width="232" height="152" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+  <text x="48" y="74" fill="#8196a9" font-size="12">Your collection</text>
+  <text x="48" y="112" fill="#e4ebf1" font-size="16" font-weight="600">comments</text>
+  <line x1="48" y1="124" x2="248" y2="124" stroke="#2f3c4c"/>
+  <text x="48" y="148" fill="#c5cfdb" font-size="13">id</text>
+  <text x="48" y="170" fill="#c5cfdb" font-size="13">body</text>
+  <rect x="44" y="180" width="208" height="46" rx="6" fill="#1b2735" stroke="#6644ff"/>
+  <text x="56" y="199" fill="#b9a6ff" font-size="13">entity_type  →  collection name</text>
+  <text x="56" y="217" fill="#b9a6ff" font-size="13">entity_id    →  primary key</text>
+
+  <!-- Arrows -->
+  <g stroke="#6644ff" stroke-width="1.5" fill="none">
+    <path d="M252 196 C 340 196, 360 70, 470 70"/>
+    <path d="M252 200 C 360 200, 380 160, 470 160"/>
+    <path d="M252 204 C 340 204, 360 250, 470 250"/>
+  </g>
+  <g fill="#6644ff">
+    <circle cx="470" cy="70" r="3"/><circle cx="470" cy="160" r="3"/><circle cx="470" cy="250" r="3"/>
+  </g>
+
+  <!-- Target collections -->
+  <g>
+    <rect x="480" y="48" width="220" height="44" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+    <text x="500" y="75" fill="#e4ebf1" font-size="14" font-weight="600">articles</text>
+    <text x="660" y="75" fill="#8196a9" font-size="12" text-anchor="end">{{ title }}</text>
+
+    <rect x="480" y="138" width="220" height="44" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+    <text x="500" y="165" fill="#e4ebf1" font-size="14" font-weight="600">products</text>
+    <text x="660" y="165" fill="#8196a9" font-size="12" text-anchor="end">{{ name }}</text>
+
+    <rect x="480" y="228" width="220" height="44" rx="8" fill="#21303f" stroke="#2f3c4c"/>
+    <text x="500" y="255" fill="#e4ebf1" font-size="14" font-weight="600">pages</text>
+    <text x="660" y="255" fill="#8196a9" font-size="12" text-anchor="end">{{ slug }}</text>
+  </g>
+
+  <text x="32" y="300" fill="#8196a9" font-size="12">One pair of columns resolves to a record in any collection — like Laravel morphTo.</text>
+</svg>

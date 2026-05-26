@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 360" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="780" height="360" rx="10" fill="#18222f"/>
+
+  <!-- Empty state -->
+  <text x="28" y="38" fill="#8196a9" font-size="12">Empty</text>
+  <rect x="28" y="48" width="320" height="48" rx="8" fill="#1b2735" stroke="#2f3c4c"/>
+  <text x="44" y="77" fill="#6b7d8f" font-size="14" font-style="italic">Select an item…</text>
+  <text x="316" y="77" fill="#6b7d8f" font-size="16" text-anchor="end">▾</text>
+
+  <!-- Selected state -->
+  <text x="28" y="128" fill="#8196a9" font-size="12">Selected</text>
+  <rect x="28" y="138" width="320" height="48" rx="8" fill="#1b2735" stroke="#2f3c4c"/>
+  <text x="44" y="167" fill="#e4ebf1" font-size="14">Rohde &amp; Schwarz</text>
+  <text x="276" y="168" fill="#8196a9" font-size="15">⤢</text>
+  <text x="300" y="168" fill="#8196a9" font-size="15">✕</text>
+  <text x="322" y="167" fill="#8196a9" font-size="16">▾</text>
+
+  <!-- Open dropdown -->
+  <text x="28" y="218" fill="#8196a9" font-size="12">Open — searchable</text>
+  <rect x="28" y="228" width="320" height="48" rx="8" fill="#1b2735" stroke="#6644ff"/>
+  <text x="44" y="257" fill="#e4ebf1" font-size="14">Rohde &amp; Schwarz</text>
+  <text x="322" y="257" fill="#8196a9" font-size="16">▴</text>
+
+  <rect x="28" y="280" width="320" height="150" rx="8" fill="#1f2c3a" stroke="#2f3c4c"/>
+  <rect x="40" y="290" width="296" height="30" rx="6" fill="#16202c" stroke="#2f3c4c"/>
+  <text x="54" y="310" fill="#6b7d8f" font-size="13">🔍  Search</text>
+  <rect x="36" y="326" width="304" height="26" rx="5" fill="#26384a"/>
+  <text x="50" y="344" fill="#e4ebf1" font-size="13">Rohde &amp; Schwarz</text>
+  <text x="50" y="372" fill="#c5cfdb" font-size="13">R&amp;S Cybersecurity ipoque GmbH</text>
+  <text x="50" y="398" fill="#c5cfdb" font-size="13">Reply AG</text>
+
+  <!-- Caption right -->
+  <text x="392" y="60" fill="#e4ebf1" font-size="14" font-weight="600">Polymorphic Reference (interface)</text>
+  <text x="392" y="86" fill="#8196a9" font-size="13">• Click to open a searchable dropdown</text>
+  <text x="392" y="110" fill="#8196a9" font-size="13">• Records come from the collection named</text>
+  <text x="404" y="128" fill="#8196a9" font-size="13">in the sibling entity_type field</text>
+  <text x="392" y="152" fill="#8196a9" font-size="13">• ⤢ opens the record, ✕ clears it</text>
+  <text x="392" y="176" fill="#8196a9" font-size="13">• Label rendered from per-collection template</text>
+</svg>

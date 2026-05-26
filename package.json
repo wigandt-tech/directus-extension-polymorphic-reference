@@ -5,6 +5,14 @@
 	"type": "module",
 	"license": "MIT",
 	"author": "wigandt.tech",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/wigandt-tech/directus-extension-polymorphic-reference.git"
+	},
+	"homepage": "https://github.com/wigandt-tech/directus-extension-polymorphic-reference#readme",
+	"bugs": {
+		"url": "https://github.com/wigandt-tech/directus-extension-polymorphic-reference/issues"
+	},
 	"keywords": [
 		"directus",
 		"directus-extension",
