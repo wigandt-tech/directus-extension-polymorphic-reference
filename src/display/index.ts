@@ -12,6 +12,38 @@ export default defineDisplay({
 	types: ['json', 'string', 'uuid'],
 	options: [
 		{
+			field: 'source',
+			name: 'Source',
+			type: 'string',
+			meta: {
+				width: 'full',
+				interface: 'select-dropdown',
+				note: 'Where the target collection comes from.',
+				options: {
+					choices: [
+						{ text: 'Self-describing value — { collection, id } / collection:id', value: 'value' },
+						{ text: 'Sibling field — id column + a separate collection column on the same row', value: 'sibling' },
+					],
+				},
+			},
+			schema: {
+				default_value: 'value',
+			},
+		},
+		{
+			field: 'collectionField',
+			name: 'Collection Field',
+			type: 'string',
+			meta: {
+				width: 'half',
+				interface: 'input',
+				note: 'Sibling field on the same row that holds the target collection name (e.g. "entity").',
+				options: { placeholder: 'entity' },
+				conditions: [{ rule: { source: { _eq: 'value' } }, hidden: true }],
+			},
+			schema: { default_value: 'entity' },
+		},
+		{
 			field: 'format',
 			name: 'Value Format',
 			type: 'string',
@@ -24,6 +56,7 @@ export default defineDisplay({
 						{ text: 'String — collection<separator>id', value: 'string' },
 					],
 				},
+				conditions: [{ rule: { source: { _eq: 'sibling' } }, hidden: true }],
 			},
 			schema: {
 				default_value: 'json',
@@ -41,14 +74,9 @@ export default defineDisplay({
 					placeholder: ':',
 				},
 				conditions: [
-					{
-						rule: { format: { _eq: 'string' } },
-						hidden: false,
-					},
-					{
-						rule: { format: { _eq: 'json' } },
-						hidden: true,
-					},
+					{ rule: { format: { _eq: 'string' } }, hidden: false },
+					{ rule: { format: { _eq: 'json' } }, hidden: true },
+					{ rule: { source: { _eq: 'sibling' } }, hidden: true },
 				],
 			},
 			schema: {
@@ -64,7 +92,10 @@ export default defineDisplay({
 				interface: 'input',
 				note: 'JSON property holding the collection name.',
 				options: { placeholder: 'collection' },
-				conditions: [{ rule: { format: { _eq: 'string' } }, hidden: true }],
+				conditions: [
+					{ rule: { format: { _eq: 'string' } }, hidden: true },
+					{ rule: { source: { _eq: 'sibling' } }, hidden: true },
+				],
 			},
 			schema: { default_value: 'collection' },
 		},
@@ -77,7 +108,10 @@ export default defineDisplay({
 				interface: 'input',
 				note: 'JSON property holding the primary key.',
 				options: { placeholder: 'id' },
-				conditions: [{ rule: { format: { _eq: 'string' } }, hidden: true }],
+				conditions: [
+					{ rule: { format: { _eq: 'string' } }, hidden: true },
+					{ rule: { source: { _eq: 'sibling' } }, hidden: true },
+				],
 			},
 			schema: { default_value: 'id' },
 		},

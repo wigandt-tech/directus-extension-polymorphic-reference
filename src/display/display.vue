@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { useApi } from '@directus/extensions-sdk';
+import { computed, ref, watch } from 'vue';
 import {
 	buildRoute,
+	collectionEndpoint,
 	templateForCollection,
 	useReferencePreview,
 	type TemplateEntry,
@@ -10,14 +12,23 @@ import {
 const props = withDefaults(
 	defineProps<{
 		value: unknown;
+		// 'value'   → the field value is self-describing ({ collection, id } / "collection:id")
+		// 'sibling' → the value is just the id; the collection lives in a sibling column of the same row
+		source?: 'value' | 'sibling';
+		collectionField?: string;
 		format?: 'json' | 'string';
 		separator?: string;
 		collectionKey?: string;
 		idKey?: string;
 		templates?: TemplateEntry[] | null;
 		enableLink?: boolean;
+		// Provided by Directus: the collection + field this display is rendered for.
+		collection?: string;
+		field?: string;
 	}>(),
 	{
+		source: 'value',
+		collectionField: 'entity',
 		format: 'json',
 		separator: ':',
 		collectionKey: 'collection',
@@ -27,10 +38,16 @@ const props = withDefaults(
 	},
 );
 
-/** Parse the self-describing value into { collection, id }. */
-const parsed = computed<{ collection: string | null; id: string | number | null }>(() => {
-	const value = props.value;
+const api = useApi();
 
+const targetCollection = ref<string | null>(null);
+const primaryKey = ref<string | number | null>(null);
+
+let resolveToken = 0;
+
+/** Parse a self-describing value into { collection, id }. */
+function parseSelfDescribing(): { collection: string | null; id: string | number | null } {
+	const value = props.value;
 	if (value == null || value === '') return { collection: null, id: null };
 
 	if (props.format === 'string') {
@@ -38,13 +55,9 @@ const parsed = computed<{ collection: string | null; id: string | number | null 
 		const str = String(value);
 		const idx = str.indexOf(sep);
 		if (idx === -1) return { collection: null, id: null };
-		return {
-			collection: str.slice(0, idx) || null,
-			id: str.slice(idx + sep.length) || null,
-		};
+		return { collection: str.slice(0, idx) || null, id: str.slice(idx + sep.length) || null };
 	}
 
-	// JSON object (already parsed by Directus for json fields)
 	if (typeof value === 'object') {
 		const obj = value as Record<string, unknown>;
 		const collection = obj[props.collectionKey || 'collection'];
@@ -56,10 +69,55 @@ const parsed = computed<{ collection: string | null; id: string | number | null 
 	}
 
 	return { collection: null, id: null };
-});
+}
 
-const targetCollection = computed(() => parsed.value.collection);
-const primaryKey = computed(() => parsed.value.id);
+async function resolve() {
+	const token = ++resolveToken;
+
+	if (props.source === 'sibling') {
+		// The value is the id; look up the row by (field == value) to read the
+		// collection from the configured sibling field of the same row.
+		if (props.value == null || props.value === '' || !props.collection || !props.field) {
+			targetCollection.value = null;
+			primaryKey.value = null;
+			return;
+		}
+
+		primaryKey.value = props.value as string | number;
+		const collectionField = props.collectionField || 'entity';
+
+		try {
+			const res = await api.get(collectionEndpoint(props.collection), {
+				params: {
+					filter: JSON.stringify({ [props.field]: { _eq: props.value } }),
+					fields: collectionField,
+					limit: 1,
+				},
+			});
+
+			if (token !== resolveToken) return;
+			const row = (res.data?.data ?? [])[0] as Record<string, unknown> | undefined;
+			const resolved = row?.[collectionField];
+			targetCollection.value = typeof resolved === 'string' && resolved.length > 0 ? resolved : null;
+		} catch {
+			if (token !== resolveToken) return;
+			targetCollection.value = null;
+		}
+
+		return;
+	}
+
+	// Self-describing value
+	const parsed = parseSelfDescribing();
+	targetCollection.value = parsed.collection;
+	primaryKey.value = parsed.id;
+}
+
+watch(
+	() => [props.value, props.source, props.collection, props.field, props.collectionField],
+	resolve,
+	{ immediate: true },
+);
 
 const template = computed<string | null>(() => templateForCollection(props.templates, targetCollection.value));
 
