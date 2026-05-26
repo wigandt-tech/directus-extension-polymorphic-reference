@@ -11,15 +11,10 @@ import {
 
 const props = withDefaults(
 	defineProps<{
-		value: unknown;
-		// 'value'   → the field value is self-describing ({ collection, id } / "collection:id")
-		// 'sibling' → the value is just the id; the collection lives in a sibling column of the same row
-		source?: 'value' | 'sibling';
+		// The field value = the primary key within the target collection.
+		value: string | number | null;
+		// Sibling column on the same row that holds the target collection name.
 		collectionField?: string;
-		format?: 'json' | 'string';
-		separator?: string;
-		collectionKey?: string;
-		idKey?: string;
 		templates?: TemplateEntry[] | null;
 		enableLink?: boolean;
 		// Provided by Directus: the collection + field this display is rendered for.
@@ -27,12 +22,7 @@ const props = withDefaults(
 		field?: string;
 	}>(),
 	{
-		source: 'value',
 		collectionField: 'entity',
-		format: 'json',
-		separator: ':',
-		collectionKey: 'collection',
-		idKey: 'id',
 		templates: null,
 		enableLink: true,
 	},
@@ -41,83 +31,44 @@ const props = withDefaults(
 const api = useApi();
 
 const targetCollection = ref<string | null>(null);
-const primaryKey = ref<string | number | null>(null);
+const primaryKey = computed<string | number | null>(() => props.value ?? null);
 
 let resolveToken = 0;
 
-/** Parse a self-describing value into { collection, id }. */
-function parseSelfDescribing(): { collection: string | null; id: string | number | null } {
-	const value = props.value;
-	if (value == null || value === '') return { collection: null, id: null };
-
-	if (props.format === 'string') {
-		const sep = props.separator || ':';
-		const str = String(value);
-		const idx = str.indexOf(sep);
-		if (idx === -1) return { collection: null, id: null };
-		return { collection: str.slice(0, idx) || null, id: str.slice(idx + sep.length) || null };
-	}
-
-	if (typeof value === 'object') {
-		const obj = value as Record<string, unknown>;
-		const collection = obj[props.collectionKey || 'collection'];
-		const id = obj[props.idKey || 'id'];
-		return {
-			collection: typeof collection === 'string' && collection.length > 0 ? collection : null,
-			id: (id as string | number) ?? null,
-		};
-	}
-
-	return { collection: null, id: null };
-}
-
-async function resolve() {
+// Look up the row by (field == value) to read the target collection from the
+// configured sibling field — displays can't see sibling values directly.
+async function resolveCollection() {
 	const token = ++resolveToken;
 
-	if (props.source === 'sibling') {
-		// The value is the id; look up the row by (field == value) to read the
-		// collection from the configured sibling field of the same row.
-		if (props.value == null || props.value === '' || !props.collection || !props.field) {
-			targetCollection.value = null;
-			primaryKey.value = null;
-			return;
-		}
-
-		primaryKey.value = props.value as string | number;
-		const collectionField = props.collectionField || 'entity';
-
-		try {
-			const res = await api.get(collectionEndpoint(props.collection), {
-				params: {
-					filter: JSON.stringify({ [props.field]: { _eq: props.value } }),
-					fields: collectionField,
-					limit: 1,
-				},
-			});
-
-			if (token !== resolveToken) return;
-			const row = (res.data?.data ?? [])[0] as Record<string, unknown> | undefined;
-			const resolved = row?.[collectionField];
-			targetCollection.value = typeof resolved === 'string' && resolved.length > 0 ? resolved : null;
-		} catch {
-			if (token !== resolveToken) return;
-			targetCollection.value = null;
-		}
-
+	if (props.value == null || props.value === '' || !props.collection || !props.field) {
+		targetCollection.value = null;
 		return;
 	}
 
-	// Self-describing value
-	const parsed = parseSelfDescribing();
-	targetCollection.value = parsed.collection;
-	primaryKey.value = parsed.id;
+	const collectionField = props.collectionField || 'entity';
+
+	try {
+		const res = await api.get(collectionEndpoint(props.collection), {
+			params: {
+				filter: JSON.stringify({ [props.field]: { _eq: props.value } }),
+				fields: collectionField,
+				limit: 1,
+			},
+		});
+
+		if (token !== resolveToken) return;
+		const row = (res.data?.data ?? [])[0] as Record<string, unknown> | undefined;
+		const resolved = row?.[collectionField];
+		targetCollection.value = typeof resolved === 'string' && resolved.length > 0 ? resolved : null;
+	} catch {
+		if (token !== resolveToken) return;
+		targetCollection.value = null;
+	}
 }
 
-watch(
-	() => [props.value, props.source, props.collection, props.field, props.collectionField],
-	resolve,
-	{ immediate: true },
-);
+watch(() => [props.value, props.collection, props.field, props.collectionField], resolveCollection, {
+	immediate: true,
+});
 
 const template = computed<string | null>(() => templateForCollection(props.templates, targetCollection.value));
 
