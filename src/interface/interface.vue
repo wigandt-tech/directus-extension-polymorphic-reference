@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useApi, useStores } from '@directus/extensions-sdk';
 import { computed, inject, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
 	buildRoute,
 	collectionEndpoint,
@@ -35,6 +36,7 @@ const emit = defineEmits<{
 	(event: 'input', value: string | number | null): void;
 }>();
 
+const { t } = useI18n();
 const api = useApi();
 const { useFieldsStore } = useStores();
 const fieldsStore = useFieldsStore();
@@ -146,7 +148,7 @@ watch(targetCollection, () => {
 
 	<!-- No entity chosen yet → nothing to select against -->
 	<v-notice v-else-if="!targetCollection" type="info">
-		Erst eine Entität wählen, dann hier einen Datensatz auswählen.
+		{{ t('select_an_item') }}
 	</v-notice>
 
 	<v-menu v-else attached :disabled="disabled" @update:model-value="(open) => open && onOpen()">
@@ -154,13 +156,13 @@ watch(targetCollection, () => {
 			<div class="prf-field" :class="{ 'prf-field--active': active, 'prf-field--disabled': disabled }" @click="!disabled && toggle()">
 				<div class="prf-content">
 					<span v-if="hasValue" class="prf-label">{{ text }}</span>
-					<span v-else class="prf-placeholder">{{ placeholder || 'Datensatz auswählen…' }}</span>
+					<span v-else class="prf-placeholder">{{ placeholder || t('select_an_item') }}</span>
 				</div>
 
 				<div class="prf-actions">
 					<router-link
 						v-if="hasValue && enableLink && route"
-						v-tooltip="'Datensatz öffnen'"
+						v-tooltip="t('open')"
 						:to="route"
 						class="prf-action"
 						@click.stop
@@ -169,7 +171,7 @@ watch(targetCollection, () => {
 					</router-link>
 					<v-icon
 						v-if="hasValue && !disabled"
-						v-tooltip="'Auswahl entfernen'"
+						v-tooltip="t('deselect')"
 						class="prf-action"
 						name="close"
 						clickable
@@ -186,7 +188,7 @@ watch(targetCollection, () => {
 					:model-value="search"
 					small
 					autofocus
-					placeholder="Suchen…"
+					:placeholder="t('search')"
 					@update:model-value="onSearch"
 				>
 					<template #prepend><v-icon name="search" small /></template>
@@ -211,7 +213,7 @@ watch(targetCollection, () => {
 						</v-list-item>
 					</template>
 					<v-list-item v-else-if="!resultsLoading" disabled>
-						<v-list-item-content>Keine Ergebnisse</v-list-item-content>
+						<v-list-item-content>{{ t('no_items') }}</v-list-item-content>
 					</v-list-item>
 				</v-list>
 			</div>

@@ -13,7 +13,7 @@ export default defineDisplay({
 	options: [
 		{
 			field: 'source',
-			name: 'Source',
+			name: '$t:source',
 			type: 'string',
 			meta: {
 				width: 'full',
@@ -32,7 +32,7 @@ export default defineDisplay({
 		},
 		{
 			field: 'collectionField',
-			name: 'Collection Field',
+			name: '$t:collection',
 			type: 'string',
 			meta: {
 				width: 'half',
@@ -45,7 +45,7 @@ export default defineDisplay({
 		},
 		{
 			field: 'format',
-			name: 'Value Format',
+			name: '$t:format',
 			type: 'string',
 			meta: {
 				width: 'half',
@@ -117,18 +117,18 @@ export default defineDisplay({
 		},
 		{
 			field: 'enableLink',
-			name: 'Make clickable',
+			name: '$t:item_link',
 			type: 'boolean',
 			meta: {
 				width: 'half',
 				interface: 'boolean',
-				options: { label: 'Render as a link to the target record' },
+				options: { label: '$t:show_link_to_item' },
 			},
 			schema: { default_value: true },
 		},
 		{
 			field: 'templates',
-			name: 'Display Templates per Collection',
+			name: '$t:display_template',
 			type: 'json',
 			meta: {
 				width: 'full',
@@ -140,7 +140,7 @@ export default defineDisplay({
 					fields: [
 						{
 							field: 'collection',
-							name: 'Collection',
+							name: '$t:collection',
 							type: 'string',
 							meta: {
 								width: 'half',
@@ -150,7 +150,7 @@ export default defineDisplay({
 						},
 						{
 							field: 'template',
-							name: 'Display Template',
+							name: '$t:display_template',
 							type: 'string',
 							meta: {
 								width: 'half',

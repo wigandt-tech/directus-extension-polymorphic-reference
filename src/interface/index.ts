@@ -14,7 +14,7 @@ export default defineInterface({
 	options: [
 		{
 			field: 'collectionField',
-			name: 'Collection Field',
+			name: '$t:collection',
 			type: 'string',
 			meta: {
 				width: 'half',
@@ -45,19 +45,19 @@ export default defineInterface({
 		},
 		{
 			field: 'placeholder',
-			name: 'Placeholder',
+			name: '$t:placeholder',
 			type: 'string',
 			meta: {
 				width: 'half',
 				interface: 'input',
 				options: {
-					placeholder: 'Datensatz auswählen…',
+					placeholder: '$t:select_an_item',
 				},
 			},
 		},
 		{
 			field: 'resultLimit',
-			name: 'Result Limit',
+			name: '$t:limit',
 			type: 'integer',
 			meta: {
 				width: 'half',
@@ -70,7 +70,7 @@ export default defineInterface({
 		},
 		{
 			field: 'templates',
-			name: 'Display Templates per Collection',
+			name: '$t:display_template',
 			type: 'json',
 			meta: {
 				width: 'full',

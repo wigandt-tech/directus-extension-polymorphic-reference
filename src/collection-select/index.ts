@@ -28,7 +28,7 @@ export default defineInterface({
 		},
 		{
 			field: 'placeholder',
-			name: 'Placeholder',
+			name: '$t:placeholder',
 			type: 'string',
 			meta: {
 				width: 'half',

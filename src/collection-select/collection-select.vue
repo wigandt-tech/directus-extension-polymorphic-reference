@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useStores } from '@directus/extensions-sdk';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
 	defineProps<{
@@ -21,6 +22,7 @@ const emit = defineEmits<{
 	(event: 'input', value: string | null): void;
 }>();
 
+const { t } = useI18n();
 const { useCollectionsStore } = useStores();
 const collectionsStore = useCollectionsStore();
 
@@ -43,7 +45,7 @@ const items = computed(() =>
 	<v-select
 		:model-value="value"
 		:items="items"
-		:placeholder="placeholder || 'Select a collection…'"
+		:placeholder="placeholder || t('select_an_item')"
 		:disabled="disabled"
 		item-icon="icon"
 		show-deselect
