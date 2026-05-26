@@ -38,17 +38,22 @@ export function renderTemplate(template: string, item: Record<string, unknown>):
 }
 
 /**
- * REST endpoint to fetch a single record, accounting for Directus system collections
+ * REST base endpoint for a collection, accounting for Directus system collections
  * that are not served under `/items`.
  */
-export function referenceEndpoint(collection: string, primaryKey: string | number): string {
-	const id = encodeURIComponent(String(primaryKey));
-
+export function collectionEndpoint(collection: string): string {
 	if (collection.startsWith('directus_')) {
-		return `/${collection.slice('directus_'.length)}/${id}`;
+		return `/${collection.slice('directus_'.length)}`;
 	}
 
-	return `/items/${collection}/${id}`;
+	return `/items/${collection}`;
+}
+
+/**
+ * REST endpoint to fetch a single record.
+ */
+export function referenceEndpoint(collection: string, primaryKey: string | number): string {
+	return `${collectionEndpoint(collection)}/${encodeURIComponent(String(primaryKey))}`;
 }
 
 /**

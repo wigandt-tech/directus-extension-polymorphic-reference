@@ -6,7 +6,7 @@ export default defineInterface({
 	name: 'Polymorphic Reference',
 	icon: 'merge_type',
 	description:
-		'Turn a polymorphic (collection + id) reference into a navigable, templated link. Reads the target collection from a sibling field — like Laravel morphTo.',
+		'Select and navigate a polymorphic (collection + id) reference. The target collection comes from a sibling field (like Laravel morphTo); pick a record from it via a searchable dropdown.',
 	component: InterfaceComponent,
 	// Read-only presentation interface: it renders the value, it does not edit it.
 	types: ['string', 'uuid', 'integer', 'bigInteger'],
@@ -30,17 +30,42 @@ export default defineInterface({
 		},
 		{
 			field: 'enableLink',
-			name: 'Make clickable',
+			name: 'Show open-record action',
 			type: 'boolean',
 			meta: {
 				width: 'half',
 				interface: 'boolean',
 				options: {
-					label: 'Render as a link to the target record',
+					label: 'Show a launch icon that opens the selected record',
 				},
 			},
 			schema: {
 				default_value: true,
+			},
+		},
+		{
+			field: 'placeholder',
+			name: 'Placeholder',
+			type: 'string',
+			meta: {
+				width: 'half',
+				interface: 'input',
+				options: {
+					placeholder: 'Datensatz auswählen…',
+				},
+			},
+		},
+		{
+			field: 'resultLimit',
+			name: 'Result Limit',
+			type: 'integer',
+			meta: {
+				width: 'half',
+				interface: 'input',
+				note: 'Max number of records loaded into the dropdown per search.',
+			},
+			schema: {
+				default_value: 25,
 			},
 		},
 		{
