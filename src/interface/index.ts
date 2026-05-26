@@ -30,13 +30,13 @@ export default defineInterface({
 		},
 		{
 			field: 'enableLink',
-			name: 'Show open-record action',
+			name: '$t:item_link',
 			type: 'boolean',
 			meta: {
-				width: 'half',
+				width: 'full',
 				interface: 'boolean',
 				options: {
-					label: 'Show a launch icon that opens the selected record',
+					label: '$t:show_link_to_item',
 				},
 			},
 			schema: {
@@ -82,7 +82,7 @@ export default defineInterface({
 					fields: [
 						{
 							field: 'collection',
-							name: 'Collection',
+							name: '$t:collection',
 							type: 'string',
 							meta: {
 								width: 'half',
@@ -94,7 +94,7 @@ export default defineInterface({
 						},
 						{
 							field: 'template',
-							name: 'Display Template',
+							name: '$t:display_template',
 							type: 'string',
 							meta: {
 								width: 'half',
