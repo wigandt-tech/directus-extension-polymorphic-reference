@@ -24,17 +24,6 @@ export default defineDisplay({
 			schema: { default_value: 'entity' },
 		},
 		{
-			field: 'enableLink',
-			name: '$t:item_link',
-			type: 'boolean',
-			meta: {
-				width: 'half',
-				interface: 'boolean',
-				options: { label: '$t:show_link_to_item' },
-			},
-			schema: { default_value: true },
-		},
-		{
 			field: 'templates',
 			name: '$t:display_template',
 			type: 'json',

@@ -2,7 +2,6 @@
 import { useApi } from '@directus/extensions-sdk';
 import { computed, ref, watch } from 'vue';
 import {
-	buildRoute,
 	collectionEndpoint,
 	templateForCollection,
 	useReferencePreview,
@@ -16,7 +15,6 @@ const props = withDefaults(
 		// Sibling column on the same row that holds the target collection name.
 		collectionField?: string;
 		templates?: TemplateEntry[] | null;
-		enableLink?: boolean;
 		// Provided by Directus: the collection + field this display is rendered for.
 		collection?: string;
 		field?: string;
@@ -24,7 +22,6 @@ const props = withDefaults(
 	{
 		collectionField: 'entity',
 		templates: null,
-		enableLink: true,
 	},
 );
 
@@ -80,10 +77,6 @@ const { label, loading } = useReferencePreview({
 
 const hasValue = computed(() => targetCollection.value != null && primaryKey.value != null && primaryKey.value !== '');
 
-const route = computed<string | null>(() =>
-	hasValue.value ? buildRoute(targetCollection.value as string, primaryKey.value as string | number) : null,
-);
-
 const text = computed(() => label.value || (primaryKey.value != null ? String(primaryKey.value) : ''));
 </script>
 
@@ -91,12 +84,7 @@ const text = computed(() => label.value || (primaryKey.value != null ? String(pr
 	<span class="polymorphic-reference-display">
 		<v-skeleton-loader v-if="loading" type="text" />
 		<span v-else-if="!hasValue" class="empty">--</span>
-		<template v-else>
-			<router-link v-if="enableLink && route" :to="route" class="reference-icon" @click.stop>
-				<v-icon name="launch" x-small />
-			</router-link>
-			<span class="reference-text">{{ text }}</span>
-		</template>
+		<span v-else>{{ text }}</span>
 	</span>
 </template>
 
@@ -104,23 +92,6 @@ const text = computed(() => label.value || (primaryKey.value != null ? String(pr
 .polymorphic-reference-display {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-}
-
-/* Only the icon is a link; the text stays plain. */
-.reference-icon {
-	display: inline-flex;
-	align-items: center;
-	color: var(--theme--foreground-subdued);
-	text-decoration: none;
-}
-
-.reference-icon:hover {
-	color: var(--theme--primary);
-}
-
-.reference-text {
-	color: var(--theme--foreground);
 }
 
 .empty {
