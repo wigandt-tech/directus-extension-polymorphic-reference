@@ -1,0 +1,9 @@
+{
+	"packages": {
+		".": {
+			"release-type": "node",
+			"package-name": "directus-extension-polymorphic-reference",
+			"changelog-path": "CHANGELOG.md"
+		}
+	}
+}
