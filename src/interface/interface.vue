@@ -151,7 +151,7 @@ watch(targetCollection, () => {
 		{{ t('select_an_item') }}
 	</v-notice>
 
-	<v-menu v-else attached :disabled="disabled" @update:model-value="(open) => open && onOpen()">
+	<v-menu v-else attached :disabled="disabled" @update:model-value="(open: boolean) => open && onOpen()">
 		<template #activator="{ toggle, active }">
 			<div class="prf-field" :class="{ 'prf-field--active': active, 'prf-field--disabled': disabled }" @click="!disabled && toggle()">
 				<div class="prf-content">
