@@ -6,6 +6,11 @@ export interface TemplateEntry {
 	template: string;
 }
 
+export interface FilterEntry {
+	collection: string;
+	filter: Record<string, unknown> | null;
+}
+
 /**
  * Extract `{{ field.path }}` tokens from a display template.
  */
@@ -91,6 +96,18 @@ export function templateForCollection(
 ): string | null {
 	if (!collection || !Array.isArray(templates)) return null;
 	return templates.find((entry) => entry?.collection === collection)?.template ?? null;
+}
+
+/**
+ * Pick the configured filter for a given collection, if any.
+ */
+export function filterForCollection(
+	filters: FilterEntry[] | null | undefined,
+	collection: string | null,
+): Record<string, unknown> | null {
+	if (!collection || !Array.isArray(filters)) return null;
+	const match = filters.find((entry) => entry?.collection === collection)?.filter;
+	return match && Object.keys(match).length > 0 ? match : null;
 }
 
 /**
