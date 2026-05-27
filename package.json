@@ -55,6 +55,8 @@
 	],
 	"scripts": {
 		"build": "directus-extension build",
+		"typecheck": "vue-tsc --noEmit",
+		"check": "npm run typecheck && npm run build && npm pack --dry-run --ignore-scripts",
 		"prepare": "directus-extension build",
 		"dev": "directus-extension build -w --no-minify",
 		"link": "directus-extension link",
@@ -63,6 +65,8 @@
 	"devDependencies": {
 		"@directus/extensions-sdk": "^17.0.0",
 		"typescript": "^5.5.0",
-		"vue": "^3.4.0"
+		"vue": "^3.4.0",
+		"vue-i18n": "^11.4.4",
+		"vue-tsc": "^3.3.2"
 	}
 }

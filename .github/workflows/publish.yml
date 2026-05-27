@@ -24,7 +24,10 @@ jobs:
       # Trusted Publishing needs a recent npm CLI.
       - run: npm install -g npm@latest
 
-      # Installs devDeps; the package's `prepare` script builds dist/.
-      - run: npm install
+      - run: npm ci --ignore-scripts
+
+      - run: npm run typecheck
+
+      - run: npm run build
 
       - run: npm publish --provenance --access public
