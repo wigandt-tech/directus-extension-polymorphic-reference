@@ -38,6 +38,28 @@ export function renderTemplate(template: string, item: Record<string, unknown>):
 }
 
 /**
+ * Process-wide in-flight request registry. Dedupes identical concurrent requests
+ * without reusing settled responses, so previews refresh after referenced items
+ * are edited.
+ */
+const requestCache = new Map<string, Promise<unknown>>();
+
+export function cachedRequest<T>(key: string, factory: () => Promise<T>): Promise<T> {
+	const existing = requestCache.get(key);
+
+	if (existing) {
+		return existing as Promise<T>;
+	}
+
+	const promise = factory().finally(() => {
+		requestCache.delete(key);
+	});
+
+	requestCache.set(key, promise);
+	return promise as Promise<T>;
+}
+
+/**
  * REST base endpoint for a collection, accounting for Directus system collections
  * that are not served under `/items`.
  */
@@ -139,9 +161,12 @@ export function useReferencePreview(opts: {
 		error.value = null;
 
 		try {
-			const res = await api.get(referenceEndpoint(collection, primaryKey), {
-				params: fields.length ? { fields: fields.join(',') } : {},
-			});
+			const cacheKey = `item:${collection}:${primaryKey}:${fields.join(',')}`;
+			const res = await cachedRequest(cacheKey, () =>
+				api.get(referenceEndpoint(collection, primaryKey), {
+					params: fields.length ? { fields: fields.join(',') } : {},
+				}),
+			);
 
 			if (requestId !== latestRequest) return; // superseded by a newer request
 
