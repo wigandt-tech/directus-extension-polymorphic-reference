@@ -47,6 +47,22 @@ export default defineInterface({
 			},
 		},
 		{
+			field: 'clearOnCollectionChange',
+			name: 'Clear on collection change',
+			type: 'boolean',
+			meta: {
+				width: 'full',
+				interface: 'boolean',
+				note: 'Clears the selected primary key when the sibling collection field changes, preventing stale references to the previous collection.',
+				options: {
+					label: 'Clear selected item when collection changes',
+				},
+			},
+			schema: {
+				default_value: true,
+			},
+		},
+		{
 			field: 'templates',
 			name: '$t:display_template',
 			type: 'json',

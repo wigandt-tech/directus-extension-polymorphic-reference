@@ -21,6 +21,7 @@ const props = withDefaults(
 		templates?: TemplateEntry[] | null;
 		filters?: FilterEntry[] | null;
 		enableLink?: boolean;
+		clearOnCollectionChange?: boolean;
 		disabled?: boolean;
 	}>(),
 	{
@@ -28,6 +29,7 @@ const props = withDefaults(
 		templates: null,
 		filters: null,
 		enableLink: true,
+		clearOnCollectionChange: true,
 		disabled: false,
 	},
 );
@@ -137,10 +139,22 @@ function deselect() {
 	emit('input', null);
 }
 
-// Reset cached results when the target collection changes (entity switched).
-watch(targetCollection, () => {
+// Reset selection state when the target collection changes (entity switched).
+watch(targetCollection, (collection, previousCollection) => {
+	searchToken++;
 	results.value = [];
 	search.value = '';
+
+	if (
+		props.clearOnCollectionChange &&
+		!props.disabled &&
+		previousCollection != null &&
+		collection !== previousCollection &&
+		props.value != null &&
+		props.value !== ''
+	) {
+		emit('input', null);
+	}
 });
 </script>
 
