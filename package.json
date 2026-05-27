@@ -65,8 +65,11 @@
 	"devDependencies": {
 		"@directus/extensions-sdk": "^17.0.0",
 		"typescript": "^6.0.3",
-		"vue": "^3.4.0",
+		"vue": "3.5.35",
 		"vue-i18n": "^11.4.4",
 		"vue-tsc": "^3.3.2"
+	},
+	"overrides": {
+		"vue": "$vue"
 	}
 }
