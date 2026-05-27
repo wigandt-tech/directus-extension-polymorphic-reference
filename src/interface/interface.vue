@@ -18,7 +18,6 @@ const props = withDefaults(
 		collectionField?: string;
 		templates?: TemplateEntry[] | null;
 		enableLink?: boolean;
-		placeholder?: string;
 		resultLimit?: number;
 		disabled?: boolean;
 	}>(),
@@ -26,7 +25,6 @@ const props = withDefaults(
 		collectionField: 'entity',
 		templates: null,
 		enableLink: true,
-		placeholder: '',
 		resultLimit: 25,
 		disabled: false,
 	},
@@ -156,7 +154,7 @@ watch(targetCollection, () => {
 			<div class="prf-field" :class="{ 'prf-field--active': active, 'prf-field--disabled': disabled }" @click="!disabled && toggle()">
 				<div class="prf-content">
 					<span v-if="hasValue" class="prf-label">{{ text }}</span>
-					<span v-else class="prf-placeholder">{{ placeholder || t('select_an_item') }}</span>
+					<span v-else class="prf-placeholder">{{ t('select_an_item') }}</span>
 				</div>
 
 				<div class="prf-actions">

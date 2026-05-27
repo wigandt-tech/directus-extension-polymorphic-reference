@@ -11,16 +11,19 @@ export default defineInterface({
 	// Read-only presentation interface: it renders the value, it does not edit it.
 	types: ['string', 'uuid', 'integer', 'bigInteger'],
 	group: 'relational',
-	options: [
+	options: ({ collection }) => [
 		{
 			field: 'collectionField',
 			name: '$t:collection',
 			type: 'string',
 			meta: {
 				width: 'half',
-				interface: 'input',
+				interface: 'system-field',
 				note: 'Name of the sibling field on this item that stores the target collection (e.g. "entity").',
 				options: {
+					collectionName: collection,
+					typeAllowList: ['string'],
+					allowNone: false,
 					placeholder: 'entity',
 				},
 			},
@@ -41,18 +44,6 @@ export default defineInterface({
 			},
 			schema: {
 				default_value: true,
-			},
-		},
-		{
-			field: 'placeholder',
-			name: '$t:placeholder',
-			type: 'string',
-			meta: {
-				width: 'half',
-				interface: 'input',
-				options: {
-					placeholder: '$t:select_an_item',
-				},
 			},
 		},
 		{
