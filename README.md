@@ -73,7 +73,7 @@ Links and lookups are mapped for `directus_users`, `directus_files`, `directus_r
 
 ## Internationalization
 
-UI labels and runtime strings use Directus' own translation keys (`$t:` for option labels, `useI18n()` core keys in components — `collection`, `source`, `format`, `limit`, `display_template`, `item_link`, `show_link_to_item`, `search`, `no_items`, `open`, `deselect`, `select_an_item`, …), so the bulk of the UI is localized in every language Directus ships. A few help notes and choice labels that have no core equivalent default to English.
+UI labels and runtime strings use Directus' own translation keys (`$t:` for option labels, `useI18n()` core keys in components — `collection`, `source`, `format`, `display_template`, `item_link`, `show_link_to_item`, `search`, `no_items`, `open`, `deselect`, `select_an_item`, …), so the bulk of the UI is localized in every language Directus ships. A few help notes and choice labels that have no core equivalent default to English.
 
 ## Development
 

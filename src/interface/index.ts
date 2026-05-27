@@ -47,19 +47,6 @@ export default defineInterface({
 			},
 		},
 		{
-			field: 'resultLimit',
-			name: '$t:limit',
-			type: 'integer',
-			meta: {
-				width: 'half',
-				interface: 'input',
-				note: 'Max number of records loaded into the dropdown per search.',
-			},
-			schema: {
-				default_value: 25,
-			},
-		},
-		{
 			field: 'templates',
 			name: '$t:display_template',
 			type: 'json',

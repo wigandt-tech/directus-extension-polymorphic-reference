@@ -18,14 +18,12 @@ const props = withDefaults(
 		collectionField?: string;
 		templates?: TemplateEntry[] | null;
 		enableLink?: boolean;
-		resultLimit?: number;
 		disabled?: boolean;
 	}>(),
 	{
 		collectionField: 'entity',
 		templates: null,
 		enableLink: true,
-		resultLimit: 25,
 		disabled: false,
 	},
 );
@@ -100,7 +98,6 @@ async function loadResults() {
 
 		const res = await api.get(collectionEndpoint(collection), {
 			params: {
-				limit: props.resultLimit,
 				fields: fields.join(','),
 				...(search.value ? { search: search.value } : {}),
 			},
