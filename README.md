@@ -47,7 +47,6 @@ Field `entity_id` → Interface → **Polymorphic Reference**.
   - `products` → `{{ name }} ({{ sku }})`
 - **Item Link**: shows a launch icon that opens the selected record.
 - **Filter**: optionally restrict which records are selectable, per target collection (e.g. only active accounts).
-- **Placeholder** / **Limit**: optional.
 
 You get a native-style relational control: click the field, search, pick a record (its primary key is written to `entity_id`), open it via the launch icon, or clear the selection.
 
@@ -82,6 +81,7 @@ UI labels and runtime strings use Directus' own translation keys (`$t:` for opti
 npm install
 npm run dev      # watch build
 npm run build    # production build → dist/
+npm run check    # typecheck, build, and package dry run
 ```
 
 Then drop `dist/` into your Directus `extensions/<name>/` folder, or `npm run link` for local development. Requires Directus host `^11`.
