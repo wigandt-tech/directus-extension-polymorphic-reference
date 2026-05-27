@@ -21,7 +21,6 @@ const props = withDefaults(
 		templates?: TemplateEntry[] | null;
 		filters?: FilterEntry[] | null;
 		enableLink?: boolean;
-		resultLimit?: number;
 		disabled?: boolean;
 	}>(),
 	{
@@ -29,7 +28,6 @@ const props = withDefaults(
 		templates: null,
 		filters: null,
 		enableLink: true,
-		resultLimit: 25,
 		disabled: false,
 	},
 );
@@ -105,7 +103,6 @@ async function loadResults() {
 
 		const res = await api.get(collectionEndpoint(collection), {
 			params: {
-				limit: props.resultLimit,
 				fields: fields.join(','),
 				...(search.value ? { search: search.value } : {}),
 				...(filter ? { filter: JSON.stringify(filter) } : {}),
