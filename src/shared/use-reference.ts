@@ -38,6 +38,37 @@ export function renderTemplate(template: string, item: Record<string, unknown>):
 }
 
 /**
+ * Process-wide request cache with a short TTL. Dedupes identical in-flight requests
+ * and reuses recent responses so a list with many rows referencing the same records
+ * (or sharing a sibling lookup) doesn't fire one request per cell.
+ */
+interface CacheEntry {
+	promise: Promise<unknown>;
+	expires: number;
+}
+
+const requestCache = new Map<string, CacheEntry>();
+const DEFAULT_TTL = 30_000;
+
+export function cachedRequest<T>(key: string, factory: () => Promise<T>, ttl = DEFAULT_TTL): Promise<T> {
+	const now = Date.now();
+	const existing = requestCache.get(key);
+
+	if (existing && existing.expires > now) {
+		return existing.promise as Promise<T>;
+	}
+
+	// Don't cache rejections — drop the entry so the next call retries.
+	const promise = factory().catch((error) => {
+		requestCache.delete(key);
+		throw error;
+	});
+
+	requestCache.set(key, { promise, expires: now + ttl });
+	return promise as Promise<T>;
+}
+
+/**
  * REST base endpoint for a collection, accounting for Directus system collections
  * that are not served under `/items`.
  */
@@ -139,9 +170,12 @@ export function useReferencePreview(opts: {
 		error.value = null;
 
 		try {
-			const res = await api.get(referenceEndpoint(collection, primaryKey), {
-				params: fields.length ? { fields: fields.join(',') } : {},
-			});
+			const cacheKey = `item:${collection}:${primaryKey}:${fields.join(',')}`;
+			const res = await cachedRequest(cacheKey, () =>
+				api.get(referenceEndpoint(collection, primaryKey), {
+					params: fields.length ? { fields: fields.join(',') } : {},
+				}),
+			);
 
 			if (requestId !== latestRequest) return; // superseded by a newer request
 
