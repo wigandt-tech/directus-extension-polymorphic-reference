@@ -100,5 +100,44 @@ export default defineInterface({
 				},
 			},
 		},
+		{
+			field: 'filters',
+			name: '$t:filter',
+			type: 'json',
+			meta: {
+				width: 'full',
+				interface: 'list',
+				note: 'Optionally restrict which records can be selected, per target collection.',
+				options: {
+					addLabel: 'Add collection filter',
+					template: '{{ collection }}',
+					fields: [
+						{
+							field: 'collection',
+							name: '$t:collection',
+							type: 'string',
+							meta: {
+								width: 'half',
+								interface: 'system-collection',
+								options: { includeSystem: true },
+							},
+						},
+						{
+							field: 'filter',
+							name: '$t:filter',
+							type: 'json',
+							meta: {
+								width: 'full',
+								interface: 'system-filter',
+								options: {
+									// Bind the filter UI to the collection chosen in this same row.
+									collectionField: 'collection',
+								},
+							},
+						},
+					],
+				},
+			},
+		},
 	],
 });
