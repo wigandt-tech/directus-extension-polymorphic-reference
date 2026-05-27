@@ -38,41 +38,24 @@ export function renderTemplate(template: string, item: Record<string, unknown>):
 }
 
 /**
- * Process-wide request cache with a short TTL. Dedupes identical in-flight requests
- * and reuses recent responses so a list with many rows referencing the same records
- * doesn't fire one request per cell.
+ * Process-wide in-flight request registry. Dedupes identical concurrent requests
+ * without reusing settled responses, so previews refresh after referenced items
+ * are edited.
  */
-interface CacheEntry {
-	promise: Promise<unknown>;
-	expires: number;
-}
+const requestCache = new Map<string, Promise<unknown>>();
 
-const requestCache = new Map<string, CacheEntry>();
-const DEFAULT_TTL = 30_000;
-
-function pruneExpiredCacheEntries(now: number) {
-	for (const [key, entry] of requestCache) {
-		if (entry.expires <= now) requestCache.delete(key);
-	}
-}
-
-export function cachedRequest<T>(key: string, factory: () => Promise<T>, ttl = DEFAULT_TTL): Promise<T> {
-	const now = Date.now();
-	pruneExpiredCacheEntries(now);
-
+export function cachedRequest<T>(key: string, factory: () => Promise<T>): Promise<T> {
 	const existing = requestCache.get(key);
 
-	if (existing && existing.expires > now) {
-		return existing.promise as Promise<T>;
+	if (existing) {
+		return existing as Promise<T>;
 	}
 
-	// Don't cache rejections — drop the entry so the next call retries.
-	const promise = factory().catch((error) => {
+	const promise = factory().finally(() => {
 		requestCache.delete(key);
-		throw error;
 	});
 
-	requestCache.set(key, { promise, expires: now + ttl });
+	requestCache.set(key, promise);
 	return promise as Promise<T>;
 }
 
