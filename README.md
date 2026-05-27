@@ -22,7 +22,7 @@ comments
 | --- | --- | --- |
 | **Polymorphic Reference** | Interface | The `entity_id` field — a searchable dropdown that lists records from the collection named in `entity_type`, writes the chosen primary key, and links out to the record. |
 | **Collection Select** | Interface | The `entity_type` field — a dropdown that lists all collections dynamically, so you never maintain a hardcoded choices list. |
-| **Polymorphic Reference** | Display | The `entity_id` column in list/table layouts — renders the templated label (text is plain; a small launch icon links to the record). |
+| **Polymorphic Reference** | Display | The `entity_id` column in list/table layouts — renders the templated label as plain text. |
 
 ## Setup
 
@@ -55,9 +55,9 @@ You get a native-style relational control: click the field, search, pick a recor
 In a list layout, set the `entity_id` column's display to **Polymorphic Reference**.
 
 - **Collection** (`collectionField`): `entity_type`
-- **Item Link** + **Display Templates per Collection** as above.
+- **Display Templates per Collection** as above.
 
-Because a Directus display only receives the value of its own field, the display looks the row up by `entity_id == value` to read `entity_type`, then renders the label. The text is plain; only the launch icon links to the record.
+Because a Directus display only receives the value of its own field, the display looks the row up by `entity_id == value` to read `entity_type`, then renders the label as plain text. Use the detail-view interface when you need the launch icon to open the referenced record.
 
 ## Why an interface for the detail view?
 
