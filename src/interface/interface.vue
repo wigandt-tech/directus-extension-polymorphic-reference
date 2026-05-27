@@ -5,10 +5,12 @@ import { useI18n } from 'vue-i18n';
 import {
 	buildRoute,
 	collectionEndpoint,
+	filterForCollection,
 	getFieldsFromTemplate,
 	renderTemplate,
 	templateForCollection,
 	useReferencePreview,
+	type FilterEntry,
 	type TemplateEntry,
 } from '../shared/use-reference';
 
@@ -17,12 +19,14 @@ const props = withDefaults(
 		value: string | number | null;
 		collectionField?: string;
 		templates?: TemplateEntry[] | null;
+		filters?: FilterEntry[] | null;
 		enableLink?: boolean;
 		disabled?: boolean;
 	}>(),
 	{
 		collectionField: 'entity',
 		templates: null,
+		filters: null,
 		enableLink: true,
 		disabled: false,
 	},
@@ -95,11 +99,13 @@ async function loadResults() {
 
 	try {
 		const fields = Array.from(new Set([pkField.value, ...getFieldsFromTemplate(template.value)])).filter(Boolean);
+		const filter = filterForCollection(props.filters, collection);
 
 		const res = await api.get(collectionEndpoint(collection), {
 			params: {
 				fields: fields.join(','),
 				...(search.value ? { search: search.value } : {}),
+				...(filter ? { filter: JSON.stringify(filter) } : {}),
 			},
 		});
 
