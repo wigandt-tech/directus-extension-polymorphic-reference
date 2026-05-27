@@ -2,7 +2,6 @@
 import { useApi } from '@directus/extensions-sdk';
 import { computed, ref, watch } from 'vue';
 import {
-	cachedRequest,
 	collectionEndpoint,
 	templateForCollection,
 	useReferencePreview,
@@ -46,16 +45,13 @@ async function resolveCollection() {
 	const collectionField = props.collectionField || 'entity';
 
 	try {
-		const cacheKey = `sibling:${props.collection}:${props.field}:${collectionField}:${props.value}`;
-		const res = await cachedRequest(cacheKey, () =>
-			api.get(collectionEndpoint(props.collection!), {
-				params: {
-					filter: JSON.stringify({ [props.field!]: { _eq: props.value } }),
-					fields: collectionField,
-					limit: 1,
-				},
-			}),
-		);
+		const res = await api.get(collectionEndpoint(props.collection), {
+			params: {
+				filter: JSON.stringify({ [props.field]: { _eq: props.value } }),
+				fields: collectionField,
+				limit: 1,
+			},
+		});
 
 		if (token !== resolveToken) return;
 		const row = (res.data?.data ?? [])[0] as Record<string, unknown> | undefined;

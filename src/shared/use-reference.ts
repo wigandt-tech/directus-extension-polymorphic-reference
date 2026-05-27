@@ -40,7 +40,7 @@ export function renderTemplate(template: string, item: Record<string, unknown>):
 /**
  * Process-wide request cache with a short TTL. Dedupes identical in-flight requests
  * and reuses recent responses so a list with many rows referencing the same records
- * (or sharing a sibling lookup) doesn't fire one request per cell.
+ * doesn't fire one request per cell.
  */
 interface CacheEntry {
 	promise: Promise<unknown>;
