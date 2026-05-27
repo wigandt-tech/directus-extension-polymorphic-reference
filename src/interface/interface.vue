@@ -142,6 +142,8 @@ function deselect() {
 // Reset selection state when the target collection changes (entity switched).
 watch(targetCollection, (collection, previousCollection) => {
 	searchToken++;
+	if (debounce) clearTimeout(debounce);
+	resultsLoading.value = false;
 	results.value = [];
 	search.value = '';
 
