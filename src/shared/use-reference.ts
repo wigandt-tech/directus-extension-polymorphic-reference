@@ -50,8 +50,16 @@ interface CacheEntry {
 const requestCache = new Map<string, CacheEntry>();
 const DEFAULT_TTL = 30_000;
 
+function pruneExpiredCacheEntries(now: number) {
+	for (const [key, entry] of requestCache) {
+		if (entry.expires <= now) requestCache.delete(key);
+	}
+}
+
 export function cachedRequest<T>(key: string, factory: () => Promise<T>, ttl = DEFAULT_TTL): Promise<T> {
 	const now = Date.now();
+	pruneExpiredCacheEntries(now);
+
 	const existing = requestCache.get(key);
 
 	if (existing && existing.expires > now) {
