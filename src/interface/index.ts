@@ -47,6 +47,22 @@ export default defineInterface({
 			},
 		},
 		{
+			field: 'enableCreate',
+			name: 'Create item action',
+			type: 'boolean',
+			meta: {
+				width: 'full',
+				interface: 'boolean',
+				note: 'Shows a plus action that opens the create form for the currently selected target collection.',
+				options: {
+					label: 'Show create item action',
+				},
+			},
+			schema: {
+				default_value: true,
+			},
+		},
+		{
 			field: 'clearOnCollectionChange',
 			name: 'Clear on collection change',
 			type: 'boolean',

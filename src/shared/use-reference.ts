@@ -110,6 +110,26 @@ export function buildRoute(collection: string, primaryKey: string | number): str
 }
 
 /**
+ * In-app router path to create a new record in a collection.
+ *
+ * Returns `null` for system collections that have no reliable create route.
+ */
+export function buildCreateRoute(collection: string): string | null {
+	switch (collection) {
+		case 'directus_users':
+			return '/users/+';
+		case 'directus_files':
+			return '/files/+';
+		case 'directus_roles':
+			return '/settings/roles/+';
+	}
+
+	if (collection.startsWith('directus_')) return null;
+
+	return `/content/${collection}/+`;
+}
+
+/**
  * Pick the configured template for a given collection.
  */
 export function templateForCollection(

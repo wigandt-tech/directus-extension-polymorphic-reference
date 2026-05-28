@@ -46,6 +46,7 @@ Field `entity_id` → Interface → **Polymorphic Reference**.
   - `articles` → `{{ title }}`
   - `products` → `{{ name }} ({{ sku }})`
 - **Item Link**: shows a launch icon that opens the selected record.
+- **Create item action**: shows a plus icon that opens Directus' create form for the currently selected target collection.
 - **Clear on collection change**: clears `entity_id` when `entity_type` changes, so a stale primary key from the previous collection is not kept accidentally.
 - **Filter**: optionally restrict which records are selectable, per target collection (e.g. only active accounts).
 
