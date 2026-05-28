@@ -63,7 +63,7 @@ const pkField = computed<string>(() => {
 });
 
 // --- Selected value preview ------------------------------------------------
-const { label, loading } = useReferencePreview({
+const { label, loading, error: previewError } = useReferencePreview({
 	collection: targetCollection,
 	primaryKey,
 	template,
@@ -77,6 +77,10 @@ const route = computed<string | null>(() =>
 
 const text = computed(() => label.value || (props.value != null ? String(props.value) : ''));
 
+const previewErrorMessage = computed(() =>
+	previewError.value ? 'Unable to load the referenced item. Check read permissions or whether the item still exists.' : null,
+);
+
 function renderItemLabel(item: Record<string, unknown>): string {
 	if (template.value) return renderTemplate(template.value, item) || String(item[pkField.value]);
 	return String(item[pkField.value]);
@@ -86,6 +90,7 @@ function renderItemLabel(item: Record<string, unknown>): string {
 const search = ref('');
 const results = ref<Record<string, unknown>[]>([]);
 const resultsLoading = ref(false);
+const resultsError = ref<string | null>(null);
 let searchToken = 0;
 let debounce: ReturnType<typeof setTimeout> | undefined;
 
@@ -98,6 +103,7 @@ async function loadResults() {
 
 	const token = ++searchToken;
 	resultsLoading.value = true;
+	resultsError.value = null;
 
 	try {
 		const fields = Array.from(new Set([pkField.value, ...getFieldsFromTemplate(template.value)])).filter(Boolean);
@@ -113,12 +119,23 @@ async function loadResults() {
 
 		if (token !== searchToken) return; // superseded
 		results.value = (res.data?.data ?? []) as Record<string, unknown>[];
-	} catch {
+	} catch (err) {
 		if (token !== searchToken) return;
 		results.value = [];
+		resultsError.value = getResultsErrorMessage(err);
 	} finally {
 		if (token === searchToken) resultsLoading.value = false;
 	}
+}
+
+function getResultsErrorMessage(err: unknown): string {
+	const status = (err as { response?: { status?: number } })?.response?.status;
+
+	if (status === 401 || status === 403) {
+		return 'You do not have permission to read this collection.';
+	}
+
+	return 'Unable to load items from this collection.';
 }
 
 function onSearch(value: string) {
@@ -145,6 +162,7 @@ watch(targetCollection, (collection, previousCollection) => {
 	if (debounce) clearTimeout(debounce);
 	resultsLoading.value = false;
 	results.value = [];
+	resultsError.value = null;
 	search.value = '';
 
 	if (
@@ -177,6 +195,12 @@ watch(targetCollection, (collection, previousCollection) => {
 				</div>
 
 				<div class="prf-actions">
+					<v-icon
+						v-if="previewErrorMessage"
+						v-tooltip="previewErrorMessage"
+						class="prf-action prf-action--warning"
+						name="warning"
+					/>
 					<router-link
 						v-if="hasValue && enableLink && route"
 						v-tooltip="t('open')"
@@ -217,6 +241,10 @@ watch(targetCollection, (collection, previousCollection) => {
 			<div class="prf-results">
 				<v-progress-linear v-if="resultsLoading" indeterminate />
 
+				<v-notice v-if="resultsError" type="warning" class="prf-results-error">
+					{{ resultsError }}
+				</v-notice>
+
 				<v-list>
 					<template v-if="results.length">
 						<v-list-item
@@ -229,7 +257,7 @@ watch(targetCollection, (collection, previousCollection) => {
 							<v-list-item-content>{{ renderItemLabel(item) }}</v-list-item-content>
 						</v-list-item>
 					</template>
-					<v-list-item v-else-if="!resultsLoading" disabled>
+					<v-list-item v-else-if="!resultsLoading && !resultsError" disabled>
 						<v-list-item-content>{{ t('no_items') }}</v-list-item-content>
 					</v-list-item>
 				</v-list>
@@ -301,6 +329,10 @@ watch(targetCollection, (collection, previousCollection) => {
 	color: var(--theme--primary);
 }
 
+.prf-action--warning {
+	color: var(--theme--warning);
+}
+
 .prf-chevron {
 	transition: transform var(--fast, 150ms) var(--transition, ease);
 }
@@ -320,5 +352,9 @@ watch(targetCollection, (collection, previousCollection) => {
 .prf-results {
 	max-height: 260px;
 	overflow-y: auto;
+}
+
+.prf-results-error {
+	margin: 8px;
 }
 </style>
