@@ -3,6 +3,7 @@ import { useApi, useStores } from '@directus/extensions-sdk';
 import { computed, inject, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
+	buildCreateRoute,
 	buildRoute,
 	collectionEndpoint,
 	filterForCollection,
@@ -21,6 +22,7 @@ const props = withDefaults(
 		templates?: TemplateEntry[] | null;
 		filters?: FilterEntry[] | null;
 		enableLink?: boolean;
+		enableCreate?: boolean;
 		clearOnCollectionChange?: boolean;
 		disabled?: boolean;
 	}>(),
@@ -29,6 +31,7 @@ const props = withDefaults(
 		templates: null,
 		filters: null,
 		enableLink: true,
+		enableCreate: true,
 		clearOnCollectionChange: true,
 		disabled: false,
 	},
@@ -40,8 +43,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const api = useApi();
-const { useFieldsStore } = useStores();
+const { useFieldsStore, usePermissionsStore } = useStores();
 const fieldsStore = useFieldsStore();
+const permissionsStore = usePermissionsStore();
 
 // All field values of the item currently being edited — this is how we reach the
 // sibling `entity`/collection field. Injected by the Directus form.
@@ -73,6 +77,12 @@ const hasValue = computed(() => targetCollection.value != null && props.value !=
 
 const route = computed<string | null>(() =>
 	hasValue.value ? buildRoute(targetCollection.value as string, props.value as string | number) : null,
+);
+
+const createRoute = computed<string | null>(() =>
+	targetCollection.value && !props.disabled && permissionsStore.hasPermission(targetCollection.value, 'create')
+		? buildCreateRoute(targetCollection.value)
+		: null,
 );
 
 const text = computed(() => label.value || (props.value != null ? String(props.value) : ''));
@@ -177,6 +187,15 @@ watch(targetCollection, (collection, previousCollection) => {
 				</div>
 
 				<div class="prf-actions">
+					<router-link
+						v-if="enableCreate && createRoute"
+						v-tooltip="'Create item'"
+						:to="createRoute"
+						class="prf-action"
+						@click.stop
+					>
+						<v-icon name="add" />
+					</router-link>
 					<router-link
 						v-if="hasValue && enableLink && route"
 						v-tooltip="t('open')"
