@@ -1,15 +1,21 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
+  id-token: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -18,10 +24,138 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
     steps:
-      - id: release
-        uses: googleapis/release-please-action@v4
+      - name: Require main branch
+        if: github.ref_name != 'main'
+        run: |
+          echo "Releases must be dispatched from the main branch. Current branch: ${{ github.ref_name }}"
+          exit 1
+
+      - uses: actions/checkout@v6
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          config-file: release-config.json
-          manifest-file: release-manifest.json
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci --ignore-scripts
+
+      - run: npm install -g npm@latest
+
+      - run: npm run check
+
+      - name: Compute next version
+        id: version
+        run: |
+          set -euo pipefail
+          previous=$(
+            git tag --list | node -e '
+              const tags = require("fs").readFileSync(0, "utf8").trim().split(/\n/).filter(Boolean);
+              const versions = tags
+                .map((tag) => {
+                  const match = tag.match(/^v?(\d+)\.(\d+)\.(\d+)$/);
+                  return match && { tag, parts: match.slice(1).map(Number) };
+                })
+                .filter(Boolean)
+                .sort((a, b) => {
+                  for (let i = 0; i < 3; i++) {
+                    if (a.parts[i] !== b.parts[i]) return b.parts[i] - a.parts[i];
+                  }
+                  return a.tag.localeCompare(b.tag);
+                });
+              if (versions[0]) process.stdout.write(versions[0].tag);
+            '
+          )
+          if [ -z "$previous" ]; then
+            ver=$(node -p "require('./package.json').version")
+          else
+            ver=${previous#v}
+          fi
+          IFS='.' read -r major minor patch <<< "$ver"
+          case "${{ inputs.bump }}" in
+            major) major=$((major+1)); minor=0; patch=0 ;;
+            minor) minor=$((minor+1)); patch=0 ;;
+            patch) patch=$((patch+1)) ;;
+          esac
+          version="${major}.${minor}.${patch}"
+          tag="$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "previous=$previous" >> "$GITHUB_OUTPUT"
+          echo "Bumping ${previous:-<none>} -> $tag"
+
+      - name: Build changelog
+        id: changelog
+        run: |
+          set -euo pipefail
+          previous="${{ steps.version.outputs.previous }}"
+          if [ -z "$previous" ]; then
+            range=""
+            header="Initial release."
+          else
+            range="${previous}..HEAD"
+            header="Changes since ${previous}:"
+          fi
+          {
+            echo "changelog<<__EOF__"
+            echo "$header"
+            echo
+            git log $range --no-merges --pretty=format:"- %s (%h)"
+            echo
+            echo "__EOF__"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "$header"
+            echo
+            git log $range --no-merges --pretty=format:"- %s (%h)"
+            echo
+          } > release-changelog.md
+
+      - name: Update package version and changelog
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          tag="${{ steps.version.outputs.tag }}"
+          date=$(date -u +%Y-%m-%d)
+          npm version "$version" --no-git-tag-version
+          tmp=$(mktemp)
+          {
+            echo "# Changelog"
+            echo
+            echo "## ${tag} - ${date}"
+            echo
+            tail -n +2 release-changelog.md
+            echo
+            if [ -f CHANGELOG.md ]; then
+              tail -n +2 CHANGELOG.md
+            fi
+          } > "$tmp"
+          mv "$tmp" CHANGELOG.md
+
+      - name: Commit and tag
+        run: |
+          set -euo pipefail
+          tag="${{ steps.version.outputs.tag }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore(release): ${tag}"
+          git tag -a "$tag" -m "Release ${tag}"
+          git push origin HEAD:${{ github.ref_name }}
+          git push origin "$tag"
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          body: ${{ steps.changelog.outputs.changelog }}
