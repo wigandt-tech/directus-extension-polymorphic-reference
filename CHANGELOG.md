@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.5.0 - 2026-05-31
+
+
+- chore: add manual release workflow (e6f7399)
+- fix: allow Directus 12 host compatibility (3c16701)
+- chore: fix display description (4968de4)
+- feat: add create action for polymorphic references (bf8c608)
+- feat: add permission feedback for reference lookups (e075531)
+- chore: simplify release tag names (a125aaa)
+
+
 ## [1.4.0](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/compare/directus-extension-polymorphic-reference-v1.3.0...directus-extension-polymorphic-reference-v1.4.0) (2026-05-27)
 
 
