@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/compare/v1.4.0...v1.5.0) (2026-05-31)
+
+
+### Features
+
+* add create action for polymorphic references ([5d0a492](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/commit/5d0a492adc951881959af56e55975a40cff19216))
+* add create action for polymorphic references ([bf8c608](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/commit/bf8c6081af45be9de28e1369647a4f8a3f4755ac))
+
+
+### Bug Fixes
+
+* allow Directus 12 host compatibility ([b61d862](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/commit/b61d862b1f924d0c67073d700795f5089e7c86b7))
+* allow Directus 12 host compatibility ([3c16701](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/commit/3c167012c2683cc2d56bbcce16dcbd0f37881923))
+
 ## [1.4.0](https://github.com/wigandt-tech/directus-extension-polymorphic-reference/compare/directus-extension-polymorphic-reference-v1.3.0...directus-extension-polymorphic-reference-v1.4.0) (2026-05-27)
 
 
