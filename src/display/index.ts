@@ -6,7 +6,7 @@ export default defineDisplay({
 	name: 'Polymorphic Reference',
 	icon: 'merge_type',
 	description:
-		'Render a polymorphic (collection + id) reference as a navigable, templated link in list/table columns. The target collection is read from a sibling column on the same row.',
+		'Render a polymorphic (collection + id) reference as templated plain text in list/table columns. The target collection is read from a sibling column on the same row.',
 	component: DisplayComponent,
 	// The value is the id; the collection comes from a sibling column.
 	types: ['string', 'uuid', 'integer', 'bigInteger'],
