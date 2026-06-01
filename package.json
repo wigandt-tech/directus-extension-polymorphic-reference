@@ -9,7 +9,7 @@
 		"type": "git",
 		"url": "git+https://github.com/wigandt-tech/directus-extension-polymorphic-reference.git"
 	},
-	"homepage": "https://github.com/wigandt-tech/directus-extension-polymorphic-reference#readme",
+	"homepage": "https://wigandt.tech/projekte/open-source/directus-extension-polymorphic-reference",
 	"bugs": {
 		"url": "https://github.com/wigandt-tech/directus-extension-polymorphic-reference/issues"
 	},
