@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.1 - 2026-06-02
+
+
+- chore: update package homepage (2c2e36e)
+
+
 ## 1.5.0 - 2026-05-31
 
 

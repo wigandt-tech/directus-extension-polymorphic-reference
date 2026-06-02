@@ -1,7 +1,7 @@
 {
 	"name": "directus-extension-polymorphic-reference",
 	"description": "Resolve polymorphic (collection + id) references into navigable, templated links — Laravel-style morphTo for Directus. Ships an interface (reads the collection from a sibling field) and a display (for self-describing values).",
-	"version": "1.5.0",
+	"version": "1.5.1",
 	"type": "module",
 	"license": "MIT",
 	"author": "wigandt.tech",
